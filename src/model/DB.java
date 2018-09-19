@@ -46,7 +46,7 @@ public class DB {
         bitcambio.setNome("Bit Cambio");
         bitcambio.setURI("https://api.blinktrade.com/api/v1/BRL/");
         bitcambio.setMoedas(getMoedaBC());
-        bitcambio.setMetodo("/ticker");
+        bitcambio.setMetodo("ticker?crypto_currency=");
         
         return bitcambio;
     }

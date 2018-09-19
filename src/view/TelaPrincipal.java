@@ -277,6 +277,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         String moeda = jComboBoxMoeda.getSelectedItem().toString();
         String uri = exchanges.get(posicaoExchange).getURI() + moeda + exchanges.get(posicaoExchange).getMetodo();
 
+        System.out.println(uri);
         Utilitario util = new Utilitario();
         String retorno = util.sendGet(uri, "GET");
         if (retorno != null) {
