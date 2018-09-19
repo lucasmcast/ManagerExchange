@@ -17,10 +17,13 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import static javafx.scene.input.KeyCode.T;
 import javax.net.ssl.HttpsURLConnection;
+import model.Exchange;
 import model.MercadoBitcoin;
+import model.DB;
 import model.Negociacoes;
 //import modelo.Usuario;
 /**
@@ -32,7 +35,32 @@ public class Teste {
     private final String USER_AGENT = "Mozilla/5.0";
 
     public static void main(String[] args) throws Exception {
-
+        
+        DB db = new DB();
+        ArrayList<Exchange> exchanges = new ArrayList<Exchange>();
+        exchanges = db.getAllExchange();
+        
+        int valor = exchanges.size();
+        System.out.println(valor);
+        for(int i = 0; i < exchanges.size(); i++){
+            System.out.println(exchanges.get(i).getNome()+"kh");
+        }
+        for(Exchange exchange : exchanges){
+            System.out.println(exchange.getNome());
+        }
+        
+        ArrayList<String> nomes = new ArrayList<>();
+        
+        nomes.add("Joao");
+        nomes.add("Maria");
+        
+        System.out.println(nomes.size());
+       /* Exchange moeda = new Exchange();
+        List<String> moedas = moeda.getMoedas();
+ 
+        for(int i=0;i < moedas.size(); i++){
+            System.out.println(moedas.get(i));
+        }*/
  
         //Gson g = new Gson();
         //Usuario u = new Usuario();
@@ -50,6 +78,7 @@ public class Teste {
         //DecimalFormat format = new DecimalFormat();
 	//format.setMaximumFractionDigits(2);
 	//format.setMinimumFractionDigits(1);
+        /*
 	double x = 27700.00000000;
 	System.out.println(x);
         
@@ -69,11 +98,8 @@ public class Teste {
             
             System.out.println("erro ao executar http");
         }
-       
+       */
         
     }
 
-   
-
-   
 }

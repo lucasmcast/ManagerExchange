@@ -44,8 +44,8 @@ public class Utilitario {
         
         //retorna o codigo de status da conexao
         int responseCode = con.getResponseCode();
-        //System.out.println("\nSending 'GET' request to URL : " + url);
-        //System.out.println("Response Code : " + responseCode);
+        System.out.println("\nSending 'GET' request to URL : " + url);
+        System.out.println("Response Code : " + responseCode);
 
         //criar um objeto do tipo BufferedReader e atribui o texto da conexao nele
         BufferedReader in = new BufferedReader( new InputStreamReader(con.getInputStream()));

@@ -5,6 +5,8 @@
  */
 package model;
 
+import java.util.List;
+
 /**
  *
  * @author lucas
@@ -12,8 +14,10 @@ package model;
 public class Exchange {
     
     private String nome;
+    private List<String> moedas;
     private String fileFoto;
     private String URI;
+    private String metodo;
 
     public String getNome() {
         return nome;
@@ -23,6 +27,15 @@ public class Exchange {
         this.nome = nome;
     }
 
+    public List<String> getMoedas() {
+        return moedas;
+    }
+
+    public void setMoedas(List<String> moedas) {
+        this.moedas = moedas;
+    }
+
+    
     public String getFileFoto() {
         return fileFoto;
     }
@@ -38,7 +51,14 @@ public class Exchange {
     public void setURI(String httpRequest) {
         this.URI = httpRequest;
     }
-    
-    
+
+    public String getMetodo() {
+        return metodo;
+    }
+
+    public void setMetodo(String metodo) {
+        this.metodo = metodo;
+    }
+
     
 }

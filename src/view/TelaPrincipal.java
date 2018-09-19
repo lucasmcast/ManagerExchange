@@ -9,9 +9,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dao.Utilitario;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import model.Exchange;
 import model.MercadoBitcoin;
+import model.DB;
 
 /**
  *
@@ -22,10 +25,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form TelaPrincipal
      */
-    Exchange exchange = new Exchange();
+    DB db = new DB();
+    ArrayList<Exchange> exchanges = new ArrayList<>();
 
     public TelaPrincipal() {
         initComponents();
+        preencheComboBox();
     }
 
     /**
@@ -61,7 +66,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jComboBoxExchange.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mercado Bitcoin", "Bitcambio", "FlowBTC" }));
         jComboBoxExchange.setSelectedIndex(-1);
         jComboBoxExchange.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -80,7 +84,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         jLabel2.setText("Moeda:");
 
-        jComboBoxMoeda.setSelectedIndex(-1);
+        jComboBoxMoeda.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBoxMoedaItemStateChanged(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -243,75 +251,69 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void jComboBoxExchangeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxExchangeItemStateChanged
         int posicao = jComboBoxExchange.getSelectedIndex();
+        System.out.println(posicao);
         //System.out.println(posicao);
-        switch (posicao) {
-            case 0:
-                exchange.setURI("https://www.mercadobitcoin.net/api/");
-                preencheComboBox();
-                //String uri = exchange.getURI()+"BTC/ticker/";
-                //System.out.println(uri);
-                break;
-            case 1:
-                exchange.setURI("https://api.blinktrade.com/api/v1/BRL/");
-                preencheComboBox();
-                break;
-            case 2:
-                preencheComboBox();
-                break;
-        }
+        int qtdMoedas = exchanges.get(posicao).getMoedas().size();
+        jComboBoxMoeda.removeAllItems();
+        for (int i = 0; i < qtdMoedas; i++) {
 
+            jComboBoxMoeda.addItem(exchanges.get(posicao).getMoedas().get(i));
+        }
+        
+        String texto = "R$0.000,00";
+        jLabelCompra.setText(texto);
+        jLabelMaiorPreço.setText(texto);
+        jLabelMenorPreco.setText(texto);
+        jLabelUltimoValor.setText(texto);
+        jLabelVenda.setText(texto);
+        jLabelVolume.setText("0");
     }//GEN-LAST:event_jComboBoxExchangeItemStateChanged
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         DecimalFormat format = new DecimalFormat("R$#,##0.00");
+
         int posicaoExchange = jComboBoxExchange.getSelectedIndex();
 
-        switch (posicaoExchange) {
-            case 0:
-                String uri = exchange.getURI();
-                uri = uri + jComboBoxMoeda.getSelectedItem().toString() + "/ticker/";
+        String moeda = jComboBoxMoeda.getSelectedItem().toString();
+        String uri = exchanges.get(posicaoExchange).getURI() + moeda + exchanges.get(posicaoExchange).getMetodo();
 
-                Utilitario util = new Utilitario();
-                String retorno = util.sendGet(uri, "GET");
-                if (retorno != null) {
-                    GsonBuilder gson = new GsonBuilder();
-                    Gson pegador = gson.create();
-                    MercadoBitcoin t = pegador.fromJson(retorno, MercadoBitcoin.class);
-                    //System.out.println(retorno);
-                    System.out.println(t.getTicker());
-                    jLabelCompra.setText(format.format(t.getTicker().getBuy()));
-                    jLabelVenda.setText(format.format(t.getTicker().getSell()));
-                    jLabelMaiorPreço.setText(format.format(t.getTicker().getHigh()));
-                    jLabelMenorPreco.setText(format.format(t.getTicker().getLow()));
-                    jLabelVolume.setText(String.valueOf(t.getTicker().getVol()));
-                    jLabelUltimoValor.setText(format.format(t.getTicker().getLast()));
-                } else {
-                    System.out.println("erro ao executar http");
-                }
-                break;
-            case 1:
-                System.out.println("Posição 2");
+        Utilitario util = new Utilitario();
+        String retorno = util.sendGet(uri, "GET");
+        if (retorno != null) {
+            GsonBuilder gson = new GsonBuilder();
+            Gson pegador = gson.create();
+            MercadoBitcoin t = pegador.fromJson(retorno, MercadoBitcoin.class);
+            //System.out.println(retorno);
+            System.out.println(t.getTicker());
+            jLabelCompra.setText(format.format(t.getTicker().getBuy()));
+            jLabelVenda.setText(format.format(t.getTicker().getSell()));
+            jLabelMaiorPreço.setText(format.format(t.getTicker().getHigh()));
+            jLabelMenorPreco.setText(format.format(t.getTicker().getLow()));
+            jLabelVolume.setText(String.valueOf(t.getTicker().getVol()));
+            jLabelUltimoValor.setText(format.format(t.getTicker().getLast()));
+        } else {
+            System.out.println("erro ao executar http");
         }
     }//GEN-LAST:event_jButton1MouseClicked
 
+    private void jComboBoxMoedaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBoxMoedaItemStateChanged
+        String texto = "R$0.000,00";
+        jLabelCompra.setText(texto);
+        jLabelMaiorPreço.setText(texto);
+        jLabelMenorPreco.setText(texto);
+        jLabelUltimoValor.setText(texto);
+        jLabelVenda.setText(texto);
+        jLabelVolume.setText("0");
+    }//GEN-LAST:event_jComboBoxMoedaItemStateChanged
+
     public void preencheComboBox() {
-        int posicaoCBExchange = jComboBoxExchange.getSelectedIndex();
-        switch (posicaoCBExchange) {
-            case 0:
-                jComboBoxMoeda.removeAllItems();
-                jComboBoxMoeda.addItem("BTC");
-                jComboBoxMoeda.addItem("LTC");
-                jComboBoxMoeda.addItem("BCH");
-                break;
-            case 1:
-                jComboBoxMoeda.removeAllItems();
-                jComboBoxMoeda.addItem("BTC");
-                break;
-            case 2:
-                jComboBoxMoeda.removeAllItems();
-                break;
+
+        //jComboBoxExchange.setSelectedIndex(-1);
+        exchanges = db.getAllExchange();
+        int tamanho = exchanges.size();
+        for (int i = 0; i < tamanho; i++) {
+            jComboBoxExchange.addItem(exchanges.get(i).getNome());
         }
-        System.out.println(posicaoCBExchange);
     }
 
     /**
