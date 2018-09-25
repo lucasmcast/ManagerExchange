@@ -23,7 +23,7 @@ import static javafx.scene.input.KeyCode.T;
 import javax.net.ssl.HttpsURLConnection;
 import model.Exchange;
 import model.MercadoBitcoin;
-import model.DB;
+import dao.DB;
 import model.Negociacoes;
 //import modelo.Usuario;
 /**
@@ -37,10 +37,15 @@ public class Teste {
     public static void main(String[] args) throws Exception {
         
         DB db = new DB();
-        ArrayList<Exchange> exchanges = new ArrayList<Exchange>();
-        exchanges = db.getAllExchange();
-        
-        int valor = exchanges.size();
+        MercadoBitcoin exchange = new MercadoBitcoin();
+        System.out.println(exchange.getNome() + " - " + exchange.getURI());
+        Utilitario util = new Utilitario();
+        String moeda = exchange.getMoedas().get(0);
+        System.out.println(moeda);
+        String metodo = exchange.getMetodo();
+        String uri = util.vericaURIExchange(exchange, moeda);
+        System.out.println(uri);
+        /*int valor = exchanges.size();
         System.out.println(valor);
         for(int i = 0; i < exchanges.size(); i++){
             System.out.println(exchanges.get(i).getNome()+"kh");
@@ -54,7 +59,7 @@ public class Teste {
         nomes.add("Joao");
         nomes.add("Maria");
         
-        System.out.println(nomes.size());
+        System.out.println(nomes.size());*/
        /* Exchange moeda = new Exchange();
         List<String> moedas = moeda.getMoedas();
  

@@ -17,10 +17,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import javax.swing.JOptionPane;
+import model.Exchange;
 
 public class Utilitario {
     
-    
+    //o agente ou aplicação que sera usada na busca http
     private final String USER_AGENT = "Mozilla/5.0";
     // HTTP GET request
     public String sendGet(String url, String method){
@@ -69,6 +70,24 @@ public class Utilitario {
             return null;
         }     
 
+    }
+    
+    public String vericaURIExchange(Exchange exchange, String moeda){
+      
+        String uri;
+        String metodo = exchange.getMetodo();
+        
+        if(exchange.getNome().equals("Mercado Bitcoin")){
+            uri = exchange.getURI() + moeda + metodo;
+            return uri;            
+        }
+        
+        if(exchange.getNome().equals("Bit Cambio")){
+            uri = exchange.getURI() + metodo + moeda;
+            return uri;
+        }
+        
+        return null;
     }
     
 }

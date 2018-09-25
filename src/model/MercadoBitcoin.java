@@ -5,15 +5,42 @@
  */
 package model;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import dao.Utilitario;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author lucas
  */
-public class MercadoBitcoin {
-    
+public class MercadoBitcoin extends Exchange {
+
     private Negociacoes ticker;
- 
-    public Negociacoes getTicker(){
+    
+    public MercadoBitcoin() {
+        super.setNome("Mercado Bitcoin");
+        super.setMetodo("/ticker");
+        super.setMoedas(getMoedasMB());
+        super.setURI("https://www.mercadobitcoin.net/api/");
+    }
+
+    public Negociacoes getTicker() {
         return ticker;
+    }
+
+    public void setTicker(Negociacoes ticker) {
+        this.ticker = ticker;
+    }
+
+    public final List<String> getMoedasMB() {
+        List<String> moedasMercadoBitcoin = new ArrayList();
+
+        moedasMercadoBitcoin.add("BTC");
+        moedasMercadoBitcoin.add("LTC");
+        moedasMercadoBitcoin.add("BCH");
+
+        return moedasMercadoBitcoin;
     }
 }

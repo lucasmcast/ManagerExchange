@@ -10,11 +10,11 @@ import com.google.gson.GsonBuilder;
 import dao.Utilitario;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JOptionPane;
 import model.Exchange;
 import model.MercadoBitcoin;
-import model.DB;
+import dao.DB;
+import model.Bitcambio;
+import model.Negociacoes;
 
 /**
  *
@@ -259,7 +259,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
             jComboBoxMoeda.addItem(exchanges.get(posicao).getMoedas().get(i));
         }
-        
+
         String texto = "R$0.000,00";
         jLabelCompra.setText(texto);
         jLabelMaiorPreço.setText(texto);
@@ -271,27 +271,40 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         DecimalFormat format = new DecimalFormat("R$#,##0.00");
-
+        Utilitario util = new Utilitario();
         int posicaoExchange = jComboBoxExchange.getSelectedIndex();
 
         String moeda = jComboBoxMoeda.getSelectedItem().toString();
-        String uri = exchanges.get(posicaoExchange).getURI() + moeda + exchanges.get(posicaoExchange).getMetodo();
+        String uri = util.vericaURIExchange(exchanges.get(posicaoExchange), moeda);
 
-        System.out.println(uri);
-        Utilitario util = new Utilitario();
+        //System.out.println(uri);
         String retorno = util.sendGet(uri, "GET");
+        
+        GsonBuilder gson = new GsonBuilder();
+        Gson pegador = gson.create();
         if (retorno != null) {
-            GsonBuilder gson = new GsonBuilder();
-            Gson pegador = gson.create();
-            MercadoBitcoin t = pegador.fromJson(retorno, MercadoBitcoin.class);
-            //System.out.println(retorno);
-            System.out.println(t.getTicker());
-            jLabelCompra.setText(format.format(t.getTicker().getBuy()));
-            jLabelVenda.setText(format.format(t.getTicker().getSell()));
-            jLabelMaiorPreço.setText(format.format(t.getTicker().getHigh()));
-            jLabelMenorPreco.setText(format.format(t.getTicker().getLow()));
-            jLabelVolume.setText(String.valueOf(t.getTicker().getVol()));
-            jLabelUltimoValor.setText(format.format(t.getTicker().getLast()));
+            switch (posicaoExchange) {
+                case 0:                    
+                    MercadoBitcoin t = pegador.fromJson(retorno, MercadoBitcoin.class);
+                    System.out.println(retorno);
+                    jLabelCompra.setText(format.format(t.getTicker().getBuy()));
+                    jLabelVenda.setText(format.format(t.getTicker().getSell()));
+                    jLabelMaiorPreço.setText(format.format(t.getTicker().getHigh()));
+                    jLabelMenorPreco.setText(format.format(t.getTicker().getLow()));
+                    jLabelVolume.setText(String.valueOf(t.getTicker().getVol()));
+                    jLabelUltimoValor.setText(format.format(t.getTicker().getLast()));
+                    break;
+                case 1:
+                    Negociacoes bit = pegador.fromJson(retorno, Negociacoes.class);
+                    System.out.println(retorno);
+                    jLabelCompra.setText(format.format(bit.getBuy()));
+                    jLabelVenda.setText(format.format(bit.getSell()));
+                    jLabelMaiorPreço.setText(format.format(bit.getHigh()));
+                    jLabelMenorPreco.setText(format.format(bit.getLow()));
+                    jLabelVolume.setText(String.valueOf(bit.getVol()));
+                    jLabelUltimoValor.setText(format.format(bit.getLast()));
+                    break;
+            }
         } else {
             System.out.println("erro ao executar http");
         }
@@ -307,7 +320,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
         jLabelVolume.setText("0");
     }//GEN-LAST:event_jComboBoxMoedaItemStateChanged
 
-    public void preencheComboBox() {
+    private void preencheComboBox() {
 
         //jComboBoxExchange.setSelectedIndex(-1);
         exchanges = db.getAllExchange();
